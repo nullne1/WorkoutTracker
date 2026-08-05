@@ -1,102 +1,37 @@
 "use client";
 
-import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import Link from "next/link"
 
-export default function AuthPage() {
-  const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+export default function HomePage() {
+  const { data: session, isPending, error, refetch } = authClient.useSession();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (isSignUp) {
-      const { data, error } = await authClient.signUp.email({
-        email,
-        password,
-        name,
-      });
-      
-      if (error) {
-        alert(error.message);
-      } else {
-        alert("Signed up successfully!");
-        setIsSignUp(false); 
-      }
-    } else {
-      const { data, error } = await authClient.signIn.email({
-        email,
-        password,
-      });
-      
-      if (error) {
-        alert(error.message);
-      } else {
-        alert("Signed in successfully!");
-      }
-    }
-  };
+  // 1. Show a loading state while Better Auth checks the session
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-black">
+        <p className="text-lg font-medium">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 text-black">
-      <div className="w-full max-w-sm space-y-4 bg-white p-6 rounded shadow-md border">
-        <h1 className="text-2xl font-bold text-center">
-          {isSignUp ? "Create an Account" : "Sign In"}
-        </h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignUp && (
-            <div>
-              <label className="block text-sm font-medium mb-1">Name</label>
-              <input 
-                type="text" 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full border border-gray-300 p-2 rounded"
-                required={isSignUp}
-              />
-            </div>
-          )}
-          
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-              required
-            />
+      {session ? (
+        <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50 text-black">
+          <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md border text-center space-y-6">
+            <h1 className="text-4xl font-bold">Welcome back, {session.user.name}!</h1>
+            <p className="text-gray-600">You are securely logged in.</p>
           </div>
-          
-          <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 p-2 rounded"
-              required
-            />
+        </div>
+      ) : (
+        <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50 text-black">
+          <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md border text-center space-y-6">
+            <h1 className="text-4xl font-bold">You are not logged in</h1>
+            <Link href="/authenticate">Sign Up</Link>
           </div>
-
-          <button 
-            type="submit" 
-            className="w-full bg-blue-600 text-white p-2 rounded font-medium hover:bg-blue-700 transition-colors"
-          >
-            {isSignUp ? "Sign Up" : "Sign In"}
-          </button>
-        </form>
-
-        <button 
-          onClick={() => setIsSignUp(!isSignUp)}
-          className="w-full text-sm text-blue-600 hover:underline"
-        >
-          {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
-        </button>
-      </div>
+        </div>
+      )}
     </div>
-  );
+  )
 }
