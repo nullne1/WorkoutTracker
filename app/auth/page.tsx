@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
+  const router = useRouter()
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +19,7 @@ export default function AuthPage() {
       const { data, error } = await authClient.signUp.email({
         email,
         password,
-        name,
+        name
       });
       
       if (error) {
@@ -24,17 +27,19 @@ export default function AuthPage() {
       } else {
         alert("Signed up successfully!");
         setIsSignUp(false); 
+        router.push("/")
       }
     } else {
       const { data, error } = await authClient.signIn.email({
         email,
-        password,
+        password
       });
       
       if (error) {
         alert(error.message);
       } else {
         alert("Signed in successfully!");
+        router.push("/")
       }
     }
   };
