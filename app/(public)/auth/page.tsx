@@ -5,12 +5,12 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
-  const router = useRouter()
-
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
