@@ -19,13 +19,13 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-row items-center p-4 bg-gray-50 text-black justify-center text-xl">
-                    <div className="w-3xs p-8 m-2 hover:bg-gray-500 rounded-lg border text-center">
-                        <Link href="/active-workout">Start Workout</Link>
-                    </div>
+                    <Link href="/active-workout">
+                        <div className="w-3xs p-8 m-2 hover:bg-gray-200 rounded-lg border text-center">Start Workout</div>
+                    </Link>
 
-                    <div className = "w-3xs p-8 m-2 hover:bg-gray-500 rounded-lg border text-center">
-                        <Link href="/active-workout">Edit Schedule</Link>
-                    </div>
+                    <Link href="/">
+                        <div className = "w-3xs p-8 m-2 hover:bg-gray-200 rounded-lg border text-center">Edit Schedule</div>
+                    </Link>
                 </div>
             </div>
         )};
