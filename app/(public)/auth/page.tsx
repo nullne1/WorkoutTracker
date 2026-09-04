@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function AuthPage() {
-  const [isSignUp, setIsSignUp] = useState(true);
+  const searchParams = useSearchParams();
+  const signUp = searchParams.get("signUp");
+  const [isSignUp, setIsSignUp] = useState(signUp === "true");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
