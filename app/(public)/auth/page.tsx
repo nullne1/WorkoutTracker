@@ -50,7 +50,7 @@ export default function AuthPage() {
     <div className="flex min-h-screen items-center justify-center p-4 bg-gray-50 text-black">
       <div className="w-full max-w-sm space-y-4 bg-white p-6 rounded shadow-md border">
         <h1 className="text-2xl font-bold text-center">
-          {isSignUp ? "Create an Account" : "Sign In"}
+          {isSignUp ? "Create an Account" : "Log in to account"}
         </h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -93,7 +93,7 @@ export default function AuthPage() {
             type="submit" 
             className="w-full bg-blue-600 text-white p-2 rounded font-medium hover:bg-blue-700 transition-colors"
           >
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {isSignUp ? "Sign Up" : "Log In"}
           </button>
         </form>
 

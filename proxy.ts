@@ -21,5 +21,5 @@ export default async function proxy(request: NextRequest) {
     }
 }
 export const config = { 
-    matcher: ['/', '/dashboard/:path*', '/active-workout/:path*'] 
+    matcher: ['/', '/dashboard/:path*', '/active-workout/:path*', '/edit_schedule:path*'] 
 };
