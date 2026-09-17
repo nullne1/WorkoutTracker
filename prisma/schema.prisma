@@ -1,7 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../lib/generated/prisma"
-}
+  provider = "prisma-client-js"
+} 
 
 datasource db {
   provider = "sqlite"
@@ -50,6 +49,7 @@ model user {
   updatedAt     DateTime
   account       account[]
   session       session[]
+  schedule     schedule[]
 }
 
 model verification {
@@ -63,28 +63,32 @@ model verification {
   @@index([identifier])
 }
 
-model schedules {
-  id String
-  name String
+model schedule {
+  id        String   @id @default(cuid())
+  name      String
 
-  userId String
-  user user @relation(fields: [userID], references: [id])
+  userId    String
+  user      user     @relation(fields: [userId], references: [id])
+  
+  days      day[]    
 }
 
 model day {
-  id String
-  name String
+  id         String    @id @default(cuid())
+  name       String
 
   scheduleId String
-  user user @relation(fields: [scheduleId], references: [id])
+  schedule  schedule @relation(fields: [scheduleId], references: [id])
+  
+  exercises  exercise[] 
 }
 
 model exercise {
-  id String
-  name String
-  sets Int
-  reps Int
+  id       String   @id @default(cuid())
+  name     String
+  sets     Int
+  reps     Int
 
-  dayId string
-  user user @relation(fields: [dayId], references: [id])
+  dayId    String
+  day      day      @relation(fields: [dayId], references: [id])
 }
