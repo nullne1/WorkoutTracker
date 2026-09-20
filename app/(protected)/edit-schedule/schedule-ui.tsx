@@ -14,9 +14,8 @@ import ExerciseList from "@/components/ExerciseList";
 
 export default function ScheduleUI() {
     const [viewingSchedules, setViewingSchedules] = useState(true);
-    const [editingSchedule, setEditingSchedule] = useState("");
+    const [viewingDays, setViewingDays] = useState("");
     const [editingDay, setEditingDay] = useState("");
-    const [editingExercise, setEditingExercise] = useState("");
 
     const { data: session, isPending, error, refetch } = authClient.useSession();
 
@@ -29,7 +28,7 @@ export default function ScheduleUI() {
             { day: "Day 6", name: "Saturday", routine: "Active Recovery" },
             { day: "Day 7", name: "Sunday", routine: "Rest" },
         ];
-    
+    // modal
     return (
         
         <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:p-12">
@@ -38,16 +37,16 @@ export default function ScheduleUI() {
                 { viewingSchedules && (
                     <ScheduleList
                         viewingSchedules={viewingSchedules}
-                        editingSchedule={editingSchedule}
+                        viewingDays={viewingDays}
                         setViewingSchedules={setViewingSchedules}
-                        setEditingSchedule={setEditingSchedule}
+                        setViewingDays={setViewingDays}
                     />
                 )}
-                { editingSchedule !== "" && (
+                { viewingDays !== "" && (
                     <DayList
-                        editingSchedule={editingSchedule}
+                        viewingDays={viewingDays}
                         editingDay={editingDay}
-                        setEditingSchedule={setEditingSchedule}
+                        setViewingDays={setViewingDays}
                         setEditingDay={setEditingDay}
                     />
                 )}
@@ -55,9 +54,6 @@ export default function ScheduleUI() {
                     <ExerciseList/>
                 )}
 
-                { editingExercise !== "" && (
-                    <></>
-                )}
                 </>
             )}
         </div>
