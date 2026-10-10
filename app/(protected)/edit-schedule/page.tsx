@@ -7,10 +7,18 @@ import ScheduleUI from "./schedule-ui";
 
 export default async function scheduleUI() {
     const session = await auth.api.getSession({ headers: await headers() });   
-    const records = await prisma.schedule.findMany({
+    const schedules = await prisma.schedule.findMany({
         where: { userId: session?.user?.id },
+        include: { 
+            days: {
+                include: {
+                    exercises: true
+                }
+            }
+        }
     });
     return (
-        <ScheduleUI></ScheduleUI>
+        <ScheduleUI
+            scheduleRecords = {schedules}/>
     )
 }

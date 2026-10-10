@@ -1,12 +1,18 @@
 import { useState } from "react";
+import { useRef } from "react";
 
 type ExerciseListProps = {
+    editingDay : String,
 
+    setEditingDay: (value: String) => void
 };
 
-export default function ExerciseList() {
+export default function ExerciseList({ editingDay, setEditingDay } : ExerciseListProps) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [isRestDay, setIsRestDay] = useState(false);
+    const dayNameRef = useRef<HTMLInputElement>(null);
+
+    let savedExercises = []
 
     const toggleExpand = (id: string) => {
         // If the clicked card is already open, close it. Otherwise, open the new one.
@@ -21,22 +27,27 @@ export default function ExerciseList() {
         }
     }
 
+    const saveExerciseClicked = () => {
+        const dayName = dayNameRef.current?.value;
+    }
+
     return (
-        <div className="min-h-screen bg-gray-50 p-4 md:p-8 lg:p-12">
+        <div className="min-h-screen bg-gray-50 p-4">
             <div className="mx-auto max-w-3xl p-6 md:p-10 border border-gray-200 rounded-2xl bg-white shadow-sm flex flex-col gap-6 md:gap-8">
                 {/* Day Settings Section */}
                 <div className="flex flex-col gap-2 md:gap-3">
-                    <label className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wider pl-1">
-                        Day 1 Routine
+                    <label className="text-sm md:text-base font-semibold text-gray-500 uppercase tracking-wider pl-1">
+                        {editingDay}
                     </label>
 
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Routine Name Input */}
                         <input 
+                            ref={dayNameRef}
                             type="text" 
-                            defaultValue="Push"
+                            defaultValue=""
                             disabled={isRestDay}
-                            placeholder="e.g., Push, Legs, Full Body"
+                            placeholder="Day: e.g., Push, Legs, Full Body"
                             className="flex-1 w-full p-4 md:p-5 text-lg md:text-xl font-bold text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-gray-400 placeholder:font-medium"
                         />
                         
@@ -120,14 +131,19 @@ export default function ExerciseList() {
                                     {/* Action Buttons */}
                                     <div className="flex flex-col md:flex-row justify-end items-center gap-3 pt-2 md:pt-4">
                                         <button onClick={() => setExpandedId(null)} className="w-full md:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 font-medium rounded-lg transition-colors text-sm md:text-base">Cancel</button>
-                                        <button className="w-full md:w-auto px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors text-sm md:text-base shadow-sm">Add to Workout</button>
+                                        <button 
+                                            onClick={() => saveExerciseClicked()}
+                                            className="w-full md:w-auto px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors text-sm md:text-base shadow-sm"
+                                        >Add to Workout</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 )}
-                <button className="w-full md:w-auto px-6 py-3 md:py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors text-base md:text-lg">
+                <button 
+                    className="w-full md:w-auto px-6 py-3 md:py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors text-base md:text-lg"
+                >
                     Save Training Day
                 </button>
             </div>

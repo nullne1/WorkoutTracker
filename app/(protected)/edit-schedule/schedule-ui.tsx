@@ -7,27 +7,29 @@ import ScheduleList from "@/components/ScheduleList"
 import DayList from "@/components/DayList"
 import ExerciseList from "@/components/ExerciseList";
 
-// type ScheduleRecord = {
-//     id: string,
-//     name: string;
-// }
+type ScheduleRecord = {
+    id: string,
+    name: string;
+}
 
-export default function ScheduleUI() {
+type ScheduleUIProps = {
+    scheduleRecords: ScheduleRecord[];
+}
+
+export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
     const [viewingSchedules, setViewingSchedules] = useState(true);
     const [viewingDays, setViewingDays] = useState("");
     const [editingDay, setEditingDay] = useState("");
 
+    const [creatingNewSchedule, setCreatingNewSchedule] = useState(true);
+
     const { data: session, isPending, error, refetch } = authClient.useSession();
 
-    const weeklySplit = [
-            { day: "Day 1", name: "Monday", routine: "Push (Chest, Shoulders, Triceps)" },
-            { day: "Day 2", name: "Tuesday", routine: "Pull (Back, Biceps)" },
-            { day: "Day 3", name: "Wednesday", routine: "Legs & Core" },
-            { day: "Day 4", name: "Thursday", routine: "Rest" },
-            { day: "Day 5", name: "Friday", routine: "Full Body (Household Objects)" },
-            { day: "Day 6", name: "Saturday", routine: "Active Recovery" },
-            { day: "Day 7", name: "Sunday", routine: "Rest" },
-        ];
+    var hasSchedule = false;
+
+    if (scheduleRecords.length > 0) {
+        hasSchedule = true;
+    }
     // modal
     return (
         
@@ -36,22 +38,29 @@ export default function ScheduleUI() {
                 <>
                 { viewingSchedules && (
                     <ScheduleList
+                        hasSchedule={hasSchedule}
                         viewingSchedules={viewingSchedules}
                         viewingDays={viewingDays}
+                        creatingNewSchedule={creatingNewSchedule}
                         setViewingSchedules={setViewingSchedules}
                         setViewingDays={setViewingDays}
+                        setCreatingNewSchedule={setCreatingNewSchedule}
                     />
                 )}
                 { viewingDays !== "" && (
                     <DayList
                         viewingDays={viewingDays}
                         editingDay={editingDay}
+                        creatingNewSchedule={creatingNewSchedule}
                         setViewingDays={setViewingDays}
                         setEditingDay={setEditingDay}
+                        setCreatingNewSchedule={setCreatingNewSchedule}
                     />
                 )}
                 { editingDay !== "" && (
-                    <ExerciseList/>
+                    <ExerciseList
+                        editingDay={editingDay}
+                        setEditingDay={setEditingDay}/>
                 )}
 
                 </>

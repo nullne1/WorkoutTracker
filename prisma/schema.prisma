@@ -49,7 +49,7 @@ model user {
   updatedAt     DateTime
   account       account[]
   session       session[]
-  schedule     schedule[]
+  schedules     schedule[]
 }
 
 model verification {
