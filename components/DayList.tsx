@@ -1,14 +1,17 @@
-type DayListProps = {
-    viewingDays: string,
-    editingDay: string,
-    creatingNewSchedule: boolean
+import type { ScheduleRecord } from "@/types/database";
 
-    setViewingDays: (value: string) => void,
-    setEditingDay: (value: string) => void,
-    setCreatingNewSchedule: (value: boolean) => void
+type DayListProps = {
+    scheduleRecords: ScheduleRecord[];
+    viewingDays: string;
+    editingDay: string;
+    creatingNewSchedule: boolean;
+
+    setViewingDays: (value: string) => void;
+    setEditingDay: (value: string) => void;
+    setCreatingNewSchedule: (value: boolean) => void;
 }
 
-export default function DayList({ viewingDays, editingDay, creatingNewSchedule, setViewingDays, setEditingDay, setCreatingNewSchedule }: DayListProps) {
+export default function DayList({ scheduleRecords, viewingDays, editingDay, creatingNewSchedule, setViewingDays, setEditingDay, setCreatingNewSchedule }: DayListProps) {
     const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const weeklySplit = [
         { day: "Day 1", name: "Monday", routine: "Push (Chest, Shoulders, Triceps)" },
@@ -67,10 +70,9 @@ export default function DayList({ viewingDays, editingDay, creatingNewSchedule, 
                     </button>
                 ))
             ) : (
-                weeklySplit.map((item, index) => (
+                scheduleRecords.at(0)?.days.map((day) => (
                     <button 
-                        key={index} 
-                        onClick={() => editDayClicked(item.name)}
+                        onClick={() => editDayClicked(day.name)}
                         className="group w-full h-full text-left focus:outline-none focus:ring-4 focus:ring-blue-100 rounded-xl transition-all"
                     >
                         <div className="bg-white border-2 border-gray-100 rounded-xl p-4 md:p-6 shadow-sm group-hover:border-blue-500 group-hover:bg-blue-50 group-hover:shadow-md transition-all duration-200 flex flex-col h-full">
@@ -79,10 +81,10 @@ export default function DayList({ viewingDays, editingDay, creatingNewSchedule, 
                             <div className="flex justify-between items-start mb-4 md:mb-6">
                                 <div>
                                     <span className="text-xs md:text-sm font-semibold text-blue-600 group-hover:text-blue-700 uppercase tracking-wider transition-colors">
-                                        {item.day}
+                                        {/*item.day*/}
                                     </span>
                                     <h2 className="text-lg md:text-xl font-bold text-gray-900">
-                                        {item.name}
+                                        {day.name}
                                     </h2>
                                 </div>
                                 
@@ -97,12 +99,12 @@ export default function DayList({ viewingDays, editingDay, creatingNewSchedule, 
                             {/* Box Content: The assigned routine */}
                             <div className="mt-auto">
                                 <div className={`p-3 md:p-4 rounded-lg border transition-colors ${
-                                    item.routine === "Rest" 
+                                    day.name === "Rest" 
                                         ? "bg-gray-50 border-gray-200 text-gray-500 group-hover:bg-white group-hover:border-blue-200 group-hover:text-blue-600" 
                                         : "bg-blue-50 border-blue-200 text-blue-800 group-hover:bg-white"
                                 }`}>
                                     <span className="text-sm md:text-base font-medium block">
-                                        {item.routine}
+                                        {day.name}
                                     </span>
                                 </div>
                             </div>

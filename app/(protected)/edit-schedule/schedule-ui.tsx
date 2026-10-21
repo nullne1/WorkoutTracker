@@ -7,10 +7,7 @@ import ScheduleList from "@/components/ScheduleList"
 import DayList from "@/components/DayList"
 import ExerciseList from "@/components/ExerciseList";
 
-type ScheduleRecord = {
-    id: string,
-    name: string;
-}
+import type { ScheduleRecord } from "@/types/database";
 
 type ScheduleUIProps = {
     scheduleRecords: ScheduleRecord[];
@@ -38,6 +35,7 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
                 <>
                 { viewingSchedules && (
                     <ScheduleList
+                        scheduleRecords={scheduleRecords}
                         hasSchedule={hasSchedule}
                         viewingSchedules={viewingSchedules}
                         viewingDays={viewingDays}
@@ -49,6 +47,7 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
                 )}
                 { viewingDays !== "" && (
                     <DayList
+                        scheduleRecords={scheduleRecords}
                         viewingDays={viewingDays}
                         editingDay={editingDay}
                         creatingNewSchedule={creatingNewSchedule}
@@ -59,6 +58,7 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
                 )}
                 { editingDay !== "" && (
                     <ExerciseList
+                        scheduleRecords={scheduleRecords}
                         editingDay={editingDay}
                         setEditingDay={setEditingDay}/>
                 )}

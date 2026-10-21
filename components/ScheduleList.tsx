@@ -1,15 +1,25 @@
+import { createSchedule, nukeDatabase } from "@/app/(protected)/actions";
+import { createDay } from "@/app/(protected)/actions";
+import { useState } from "react";
+
+import type { ScheduleRecord } from "@/types/database";
+
 type ScheduleListProps = {
-    hasSchedule: boolean,
-    viewingSchedules: boolean,
-    viewingDays: string,
+    scheduleRecords: ScheduleRecord[];
+    hasSchedule: boolean;
+    viewingSchedules: boolean;
+    viewingDays: string;
     creatingNewSchedule: boolean
 
-    setViewingSchedules: (value: boolean) => void,
-    setViewingDays: (value: string) => void,
-    setCreatingNewSchedule: (value:boolean) => void
+    setViewingSchedules: (value: boolean) => void;
+    setViewingDays: (value: string) => void;
+    setCreatingNewSchedule: (value:boolean) => void;
 }
 
-export default function ScheduleList({ hasSchedule, viewingSchedules, viewingDays, creatingNewSchedule, setViewingSchedules, setViewingDays, setCreatingNewSchedule }: ScheduleListProps) {
+export default function ScheduleList({ scheduleRecords, hasSchedule, viewingSchedules, viewingDays, creatingNewSchedule, setViewingSchedules, setViewingDays, setCreatingNewSchedule }: ScheduleListProps) {
+    const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const [isSaving, setIsSaving] = useState(false);
+
     const editScheduleClicked = () => {
         setCreatingNewSchedule(false);
         setViewingSchedules(false);
@@ -17,9 +27,29 @@ export default function ScheduleList({ hasSchedule, viewingSchedules, viewingDay
     }
 
     const createNewScheduleClicked = () => {
+        handleSchedule()
         setCreatingNewSchedule(true);
         setViewingSchedules(false);
         setViewingDays("test");
+    }
+
+    const databaseaction = () => {
+        nukeDatabase();
+    }
+    console.log(scheduleRecords)
+
+    async function handleSchedule() {
+        try {
+            setIsSaving(true)
+            const scheduleId = await createSchedule("test1");
+            for (let i = 0; i < 7; i++) {
+                await createDay(week[i], "N/A", scheduleId.id);
+            }
+        } catch (error) {
+            console.error("Failed to save:", error);
+        } finally {
+            setIsSaving(false);
+        }
     }
 
     return (
@@ -57,7 +87,7 @@ export default function ScheduleList({ hasSchedule, viewingSchedules, viewingDay
                                         </svg>
                                     </div>
                                     
-                                    <span className="text-xl md:text-2xl font-bold text-gray-900 block mb-1">Schedule 1</span>
+                                    <span className="text-xl md:text-2xl font-bold text-gray-900 block mb-1">{scheduleRecords[0].name}</span>
                                     <span className="text-sm md:text-base text-gray-500 line-clamp-2">View or modify your current 7-day training split.</span>
                                 </div>
                             </button>
@@ -78,6 +108,22 @@ export default function ScheduleList({ hasSchedule, viewingSchedules, viewingDay
                                 </div>
                                 
                                 <span className="text-lg md:text-xl font-bold text-gray-700 group-hover:text-gray-900 text-center">Create Schedule</span>
+                                <span className="text-sm md:text-base text-gray-500 mt-1 text-center">Start fresh with a blank template.</span>
+                            </div>
+                        </button>
+                        <button className="group w-full h-full text-left focus:outline-none focus:ring-4 focus:ring-green-100 rounded-xl transition-all"
+                                onClick={() => databaseaction()}>
+                            {/* Notice the border-dashed class here */}
+                            <div className="h-full flex flex-col items-center justify-center p-6 md:p-8 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-green-500 hover:bg-green-50 hover:shadow-md transition-all duration-200">
+                                
+                                {/* Icon Box */}
+                                <div className="mb-3 md:mb-4 p-4 w-16 h-16 flex items-center justify-center bg-white border border-gray-200 text-gray-400 rounded-full group-hover:bg-green-600 group-hover:text-white group-hover:border-green-600 transition-colors shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                </div>
+                                
+                                <span className="text-lg md:text-xl font-bold text-gray-700 group-hover:text-gray-900 text-center">Database action</span>
                                 <span className="text-sm md:text-base text-gray-500 mt-1 text-center">Start fresh with a blank template.</span>
                             </div>
                         </button>

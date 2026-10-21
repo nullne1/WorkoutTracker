@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { useRef } from "react";
 
-type ExerciseListProps = {
-    editingDay : String,
+//import { saveExercise } from "@/app/(protected)/actions";
 
-    setEditingDay: (value: String) => void
+import type { ScheduleRecord } from "@/types/database";
+
+type ExerciseListProps = {
+    scheduleRecords: ScheduleRecord[];
+    editingDay : String;
+
+    setEditingDay: (value: string) => void
 };
 
 export default function ExerciseList({ editingDay, setEditingDay } : ExerciseListProps) {
@@ -27,10 +32,6 @@ export default function ExerciseList({ editingDay, setEditingDay } : ExerciseLis
         }
     }
 
-    const saveExerciseClicked = () => {
-        const dayName = dayNameRef.current?.value;
-    }
-
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="mx-auto max-w-3xl p-6 md:p-10 border border-gray-200 rounded-2xl bg-white shadow-sm flex flex-col gap-6 md:gap-8">
@@ -43,7 +44,6 @@ export default function ExerciseList({ editingDay, setEditingDay } : ExerciseLis
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Routine Name Input */}
                         <input 
-                            ref={dayNameRef}
                             type="text" 
                             defaultValue=""
                             disabled={isRestDay}
@@ -109,33 +109,33 @@ export default function ExerciseList({ editingDay, setEditingDay } : ExerciseLis
                                     
                                     {/* Form Inputs Grid */}
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                                        <div className="md:col-span-3">
-                                            <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Exercise Name</label>
-                                            <input type="text" placeholder="e.g., Incline Dumbbell Press" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Target Muscle</label>
-                                            <input type="text" placeholder="e.g., Chest" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Sets</label>
-                                            <input type="number" placeholder="3" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Reps</label>
-                                            <input type="text" placeholder="8-12" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
-                                        </div>
-                                    </div>
-
-                                    {/* Action Buttons */}
-                                    <div className="flex flex-col md:flex-row justify-end items-center gap-3 pt-2 md:pt-4">
-                                        <button onClick={() => setExpandedId(null)} className="w-full md:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 font-medium rounded-lg transition-colors text-sm md:text-base">Cancel</button>
-                                        <button 
-                                            onClick={() => saveExerciseClicked()}
-                                            className="w-full md:w-auto px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors text-sm md:text-base shadow-sm"
-                                        >Add to Workout</button>
-                                    </div>
+                                        <form>
+                                            <div className="md:col-span-3">
+                                                <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Exercise Name</label>
+                                                <input name="name" type="text" placeholder="e.g., Incline Dumbbell Press" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
+                                            </div>
+                                            
+                                            <div>
+                                                <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Target Muscle</label>
+                                                <input name="targetMuscle" type="text" placeholder="e.g., Chest" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Sets</label>
+                                                <input name="sets" type="number" placeholder="3" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Reps</label>
+                                                <input name="reps" type="text" placeholder="8-12" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
+                                            </div>
+                                            <div className="flex flex-col md:flex-row justify-end items-center gap-3 pt-2 md:pt-4">
+                                                <button onClick={() => setExpandedId(null)} className="w-full md:w-auto px-4 py-2 text-gray-600 hover:bg-gray-100 font-medium rounded-lg transition-colors text-sm md:text-base">Cancel</button>
+                                                <button 
+                                                    type="submit"
+                                                    className="w-full md:w-auto px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors text-sm md:text-base shadow-sm"
+                                                >Add to Workout</button>
+                                            </div>
+                                        </form>
+                                    </div>                                
                                 </div>
                             </div>
                         </div>
