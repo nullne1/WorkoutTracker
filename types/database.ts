@@ -1,5 +1,9 @@
 // types/database.ts
 
+export type ScheduleUIProps = {
+    scheduleRecords: ScheduleRecord[];
+}
+
 export type ExerciseRecord = {
     id: string;
     name: string;

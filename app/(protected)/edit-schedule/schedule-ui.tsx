@@ -7,16 +7,14 @@ import ScheduleList from "@/components/ScheduleList"
 import DayList from "@/components/DayList"
 import ExerciseList from "@/components/ExerciseList";
 
-import type { ScheduleRecord } from "@/types/database";
-
-type ScheduleUIProps = {
-    scheduleRecords: ScheduleRecord[];
-}
+import type { ScheduleUIProps } from "@/types/database";
+import type { DayRecord } from "@/types/database";
 
 export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
     const [viewingSchedules, setViewingSchedules] = useState(true);
     const [viewingDays, setViewingDays] = useState("");
-    const [editingDay, setEditingDay] = useState("");
+    const [viewingExercises, setViewingExercises] = useState<DayRecord | null>(null);
+    const [scheduleRecordsState, setScheduleRecordsState] = useState(scheduleRecords)
 
     const [creatingNewSchedule, setCreatingNewSchedule] = useState(true);
 
@@ -35,11 +33,12 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
                 <>
                 { viewingSchedules && (
                     <ScheduleList
-                        scheduleRecords={scheduleRecords}
+                        scheduleRecordsState={scheduleRecordsState}
                         hasSchedule={hasSchedule}
                         viewingSchedules={viewingSchedules}
                         viewingDays={viewingDays}
                         creatingNewSchedule={creatingNewSchedule}
+                        setScheduleRecordsState={setScheduleRecordsState}
                         setViewingSchedules={setViewingSchedules}
                         setViewingDays={setViewingDays}
                         setCreatingNewSchedule={setCreatingNewSchedule}
@@ -47,20 +46,22 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
                 )}
                 { viewingDays !== "" && (
                     <DayList
-                        scheduleRecords={scheduleRecords}
+                        scheduleRecordsState={scheduleRecordsState}
                         viewingDays={viewingDays}
-                        editingDay={editingDay}
+                        viewingExercises={viewingExercises}
                         creatingNewSchedule={creatingNewSchedule}
+                        setScheduleRecordsState={setScheduleRecordsState}
                         setViewingDays={setViewingDays}
-                        setEditingDay={setEditingDay}
+                        setViewingExercises={setViewingExercises}
                         setCreatingNewSchedule={setCreatingNewSchedule}
                     />
                 )}
-                { editingDay !== "" && (
+                { viewingExercises !== null && (
                     <ExerciseList
-                        scheduleRecords={scheduleRecords}
-                        editingDay={editingDay}
-                        setEditingDay={setEditingDay}/>
+                        scheduleRecordsState={scheduleRecordsState}
+                        viewingExercises={viewingExercises}
+                        setScheduleRecordsState={setScheduleRecordsState}
+                        setViewingExercises={setViewingExercises}/>
                 )}
 
                 </>

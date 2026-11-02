@@ -4,20 +4,20 @@ import { useRef } from "react";
 //import { saveExercise } from "@/app/(protected)/actions";
 
 import type { ScheduleRecord } from "@/types/database";
+import type { DayRecord } from "@/types/database";
 
 type ExerciseListProps = {
-    scheduleRecords: ScheduleRecord[];
-    editingDay : String;
-
-    setEditingDay: (value: string) => void
+    scheduleRecordsState: ScheduleRecord[];
+    viewingExercises: DayRecord | null;
+    
+    setScheduleRecordsState: (value: ScheduleRecord[]) => void;
+    setViewingExercises: (value: DayRecord) => void
 };
 
-export default function ExerciseList({ editingDay, setEditingDay } : ExerciseListProps) {
+export default function ExerciseList({ viewingExercises, setViewingExercises } : ExerciseListProps) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [isRestDay, setIsRestDay] = useState(false);
     const dayNameRef = useRef<HTMLInputElement>(null);
-
-    let savedExercises = []
 
     const toggleExpand = (id: string) => {
         // If the clicked card is already open, close it. Otherwise, open the new one.
@@ -38,7 +38,7 @@ export default function ExerciseList({ editingDay, setEditingDay } : ExerciseLis
                 {/* Day Settings Section */}
                 <div className="flex flex-col gap-2 md:gap-3">
                     <label className="text-sm md:text-base font-semibold text-gray-500 uppercase tracking-wider pl-1">
-                        {editingDay}
+                        {viewingExercises?.name}
                     </label>
 
                     <div className="flex flex-col md:flex-row gap-4">
