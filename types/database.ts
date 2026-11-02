@@ -9,16 +9,16 @@ export type ExerciseRecord = {
 };
 
 export type DayRecord = {
-    id: string;
-    name: string;
-    routine: string;
-    scheduleId: string;
-    exercises: ExerciseRecord[];
+    id?: string;
+    name?: string;
+    routine?: string;
+    scheduleId?: string;
+    exercises?: ExerciseRecord[];
 };
 
 export type ScheduleRecord = {
-    id: string;
-    name: string;
-    userId: string;
-    days: DayRecord[]; 
+    id?: string;
+    name?: string;
+    userId?: string;
+    days?: DayRecord[]; 
 };

@@ -48,9 +48,10 @@ export async function createDay(name: string, routine: string, scheduleId: strin
         data: { 
             name: name,
             routine: routine,
-            scheduleId: scheduleId
+            scheduleId: scheduleId,
         }
     })
+
     return newSchedule;
 }
 

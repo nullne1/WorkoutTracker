@@ -3,6 +3,7 @@ import { createDay } from "@/app/(protected)/actions";
 import { useState } from "react";
 
 import type { ScheduleRecord } from "@/types/database";
+import type { DayRecord } from "@/types/database";
 
 type ScheduleListProps = {
     scheduleRecords: ScheduleRecord[];
@@ -18,37 +19,56 @@ type ScheduleListProps = {
 
 export default function ScheduleList({ scheduleRecords, hasSchedule, viewingSchedules, viewingDays, creatingNewSchedule, setViewingSchedules, setViewingDays, setCreatingNewSchedule }: ScheduleListProps) {
     const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const [isSaving, setIsSaving] = useState(false);
+    const [isSaving, setIsSaving] = useState(false)
 
     const editScheduleClicked = () => {
-        setCreatingNewSchedule(false);
         setViewingSchedules(false);
         setViewingDays("test");
     }
 
     const createNewScheduleClicked = () => {
         handleSchedule()
-        setCreatingNewSchedule(true);
-        setViewingSchedules(false);
-        setViewingDays("test");
     }
 
     const databaseaction = () => {
         nukeDatabase();
     }
-    console.log(scheduleRecords)
-
+    
     async function handleSchedule() {
         try {
-            setIsSaving(true)
-            const scheduleId = await createSchedule("test1");
+            setIsSaving(true);
+            const schedule : ScheduleRecord = {}
+            const day : DayRecord = {};
+            
+            const newSchedule = await createSchedule("test1");
+
+            Object.assign(schedule, {
+                id: newSchedule.id,
+                name: newSchedule.name,
+                userId: newSchedule.userId
+            });
+
+            scheduleRecords.push(schedule);
+
             for (let i = 0; i < 7; i++) {
-                await createDay(week[i], "N/A", scheduleId.id);
+                const newDay = await createDay(week[i], "N/A", newSchedule.id);
+
+                Object.assign(day, {
+                    id: newDay.id,
+                    name:newDay.name,
+                    routine: newDay.routine,
+                    scheduleId: newDay.scheduleId,
+                })
+
+                schedule.days?.push(day);
             }
+            while (isSaving) {
+                setViewingSchedules(false);
+                setViewingDays(newSchedule.id);
+            }
+            setIsSaving(false);
         } catch (error) {
             console.error("Failed to save:", error);
-        } finally {
-            setIsSaving(false);
         }
     }
 
@@ -70,15 +90,15 @@ export default function ScheduleList({ scheduleRecords, hasSchedule, viewingSche
                     {/* Selection Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         {/* Left Card: Edit Existing Schedule */}
-                        {hasSchedule && (
+                        {hasSchedule && scheduleRecords.map((record, index) => (
                             <button className="group w-full h-full text-left focus:outline-none focus:ring-4 focus:ring-blue-100 rounded-xl transition-all"
                                     onClick={() => editScheduleClicked()}>
                                 <div className="h-full flex flex-col p-6 md:p-8 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-500 hover:bg-blue-50 hover:shadow-md transition-all duration-200 relative overflow-hidden">
                                     
                                     {/* Active Badge */}
-                                    <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-green-100 text-green-700 text-xs md:text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                                    {/* <div className="absolute top-4 right-4 md:top-6 md:right-6 bg-green-100 text-green-700 text-xs md:text-sm font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                                         Active
-                                    </div>
+                                    </div> */}
 
                                     {/* Icon Box */}
                                     <div className="mb-4 md:mb-6 p-4 w-16 h-16 flex items-center justify-center bg-gray-100 text-gray-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
@@ -87,16 +107,16 @@ export default function ScheduleList({ scheduleRecords, hasSchedule, viewingSche
                                         </svg>
                                     </div>
                                     
-                                    <span className="text-xl md:text-2xl font-bold text-gray-900 block mb-1">{scheduleRecords[0].name}</span>
+                                    <span className="text-xl md:text-2xl font-bold text-gray-900 block mb-1">{record.name}</span>
                                     <span className="text-sm md:text-base text-gray-500 line-clamp-2">View or modify your current 7-day training split.</span>
                                 </div>
                             </button>
-                        )}
+                        ))}
                         
 
                         {/* Right Card: Create New Schedule */}
                         <button className="group w-full h-full text-left focus:outline-none focus:ring-4 focus:ring-green-100 rounded-xl transition-all"
-                                onClick={() => createNewScheduleClicked()}>
+                                onClick={() => handleSchedule()}>
                             {/* Notice the border-dashed class here */}
                             <div className="h-full flex flex-col items-center justify-center p-6 md:p-8 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 hover:border-green-500 hover:bg-green-50 hover:shadow-md transition-all duration-200">
                                 
