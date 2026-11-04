@@ -62,12 +62,12 @@ export default function DayList({ scheduleRecordsState, viewingDays, viewingExer
                             {/* Box Content: The assigned routine */}
                             <div className="mt-auto">
                                 <div className={`p-3 md:p-4 rounded-lg border transition-colors ${
-                                    day.name === "Rest" 
+                                    day.name === "Rest" || day.routine === "N/A"
                                         ? "bg-gray-50 border-gray-200 text-gray-500 group-hover:bg-white group-hover:border-blue-200 group-hover:text-blue-600" 
                                         : "bg-blue-50 border-blue-200 text-blue-800 group-hover:bg-white"
                                 }`}>
                                     <span className="text-sm md:text-base font-medium block">
-                                        {day.name}
+                                        {day.routine}
                                     </span>
                                 </div>
                             </div>

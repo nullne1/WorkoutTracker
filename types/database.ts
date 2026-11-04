@@ -12,6 +12,13 @@ export type ExerciseRecord = {
     dayId: string;
 };
 
+export type ExerciseRecordCopy = {
+    name: string;
+    sets: number;
+    reps: number;
+    dayId: string;
+};
+
 export type DayRecord = {
     id?: string;
     name?: string;

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useRef } from "react";
+import { SubmitEvent } from "react";
 
-//import { saveExercise } from "@/app/(protected)/actions";
+import { saveExercise } from "@/app/(protected)/actions";
+import ExerciseCard from "./ExerciseCard"
 
 import type { ScheduleRecord } from "@/types/database";
 import type { DayRecord } from "@/types/database";
+import type { ExerciseRecordCopy } from "@/types/database"
 
 type ExerciseListProps = {
     scheduleRecordsState: ScheduleRecord[];
@@ -14,10 +17,14 @@ type ExerciseListProps = {
     setViewingExercises: (value: DayRecord) => void
 };
 
-export default function ExerciseList({ viewingExercises, setViewingExercises } : ExerciseListProps) {
+
+export default function ExerciseList({ scheduleRecordsState, viewingExercises, setScheduleRecordsState, setViewingExercises } : ExerciseListProps) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [isRestDay, setIsRestDay] = useState(false);
-    const dayNameRef = useRef<HTMLInputElement>(null);
+    const [addedExercise, setAddedExercise] = useState<ExerciseRecordCopy | null>(null);
+    const [exerciseList, setExerciseList] = useState<ExerciseRecordCopy[] | null>([]);
+    
+    const exerciseListCopy = [] as ExerciseRecordCopy[];
 
     const toggleExpand = (id: string) => {
         // If the clicked card is already open, close it. Otherwise, open the new one.
@@ -32,6 +39,36 @@ export default function ExerciseList({ viewingExercises, setViewingExercises } :
         }
     }
 
+    const addExerciseClicked = (event: SubmitEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        
+        const exercise : ExerciseRecordCopy = {
+            name: formData.get("name")?.toString()!,
+            sets: Number(formData.get("sets")),
+            reps: Number(formData.get("reps")),
+            dayId: viewingExercises?.id!
+        }
+        setExerciseList((prevList) => [...prevList!, exercise]);
+    }
+
+    const saveClicked = () => {
+        for (let i = 0; i < exerciseList!.length; i++) {
+            saveExercise(exerciseList!.at(i)!);
+        }
+    }
+
+    const findExercises = () => {
+        const daysList = scheduleRecordsState.at(0)?.days!;
+        for (let i = 0; i < daysList.length; i++) {
+            const dayRecord = Object.entries(daysList.at(i)!)
+
+            if (dayRecord.find(([key, val]) => val === viewingExercises?.id)) {
+                return daysList.at(i)?.exercises
+            }
+        }
+    }
+    console.log(findExercises())
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="mx-auto max-w-3xl p-6 md:p-10 border border-gray-200 rounded-2xl bg-white shadow-sm flex flex-col gap-6 md:gap-8">
@@ -84,6 +121,23 @@ export default function ExerciseList({ viewingExercises, setViewingExercises } :
                         <p className="text-sm md:text-base text-gray-500">No exercises scheduled for today. Uncheck the "Rest Day" button above to add movements.</p>
                     </div>
                 ) : (
+                    <>
+                    {findExercises()?.map((exercise, index) => (
+                        <ExerciseCard
+                            key={index}
+                            name={exercise.name} 
+                            sets={exercise.sets} 
+                            reps={exercise.reps}>
+                        </ExerciseCard>
+                    ))}
+                    {exerciseList?.map((exercise, index) => (
+                        <ExerciseCard 
+                            key={index}
+                            name={exercise.name} 
+                            sets={exercise.sets} 
+                            reps={exercise.reps}>
+                        </ExerciseCard>
+                    ))}
                     <div className="flex flex-col gap-4 md:gap-5">
                         {/* 2. Create New Exercise */}
                         <div className={`border-2 border-dashed rounded-xl transition-colors duration-200 overflow-hidden ${expandedId === 'new' ? 'border-green-500 bg-white shadow-md' : 'border-gray-300 bg-gray-50 hover:border-green-400'}`}>
@@ -104,12 +158,12 @@ export default function ExerciseList({ viewingExercises, setViewingExercises } :
                             </button>
 
                             {/* Dropdown Form Area */}
-                            <div className={`transition-all duration-300 ease-in-out ${expandedId === 'new' ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className={`transition-all duration-300 ease-in-out ${expandedId === 'new' ? 'max-h-200 opacity-100' : 'max-h-0 opacity-0'}`}>
                                 <div className="p-4 md:p-6 border-t border-gray-100 bg-white flex flex-col gap-4 md:gap-6">
                                     
                                     {/* Form Inputs Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                                        <form>
+                                    <div className="p-4 md:p-4 grid grid-cols-1 md:grid-cols-1 gap-4 md:gap-6">
+                                        <form onSubmit={addExerciseClicked}>
                                             <div className="md:col-span-3">
                                                 <label className="block text-xs md:text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Exercise Name</label>
                                                 <input name="name" type="text" placeholder="e.g., Incline Dumbbell Press" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-shadow text-sm md:text-base text-gray-900 bg-white" />
@@ -140,9 +194,11 @@ export default function ExerciseList({ viewingExercises, setViewingExercises } :
                             </div>
                         </div>
                     </div>
+                    </>
                 )}
                 <button 
                     className="w-full md:w-auto px-6 py-3 md:py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-colors text-base md:text-lg"
+                    onClick={() => saveClicked()}
                 >
                     Save Training Day
                 </button>

@@ -4,27 +4,30 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { ExerciseRecordCopy } from "@/types/database";
 
-// export async function saveExercise(formData: FormData) { // name: string, sets: number, reps: number, day: string
-//     const session = await auth.api.getSession({ headers: await headers() });
-//     if (!session) throw new Error("Not logged in");
+export async function saveExercise(exercise: ExerciseRecordCopy) { // name: string, sets: number, reps: number, day: string
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) throw new Error("Not logged in");
 
-//     const name = formData.get("name") as string;
-//     const sets = Number(formData.get("sets") as string);
-//     const reps = Number(formData.get("sets") as string);
+    const name = exercise.name as string;
+    const sets = Number(exercise.sets);
+    const reps = Number(exercise.reps);
+    const dayId = exercise.dayId as string;
 
-//     console.log(name)
+    console.log(name)
 
-//     const newExercise = prisma.exercise.create({
-//         data: {
-//             id: session.user.id,
-//             name: name,
-//             sets: sets,
-//             reps: reps,
-//             dayId: day
-//         }
-//     })
-// }
+    const newExercise = prisma.exercise.create({
+        data: {
+            name: name,
+            sets: sets,
+            reps: reps,
+            dayId: dayId!
+        }
+    })
+
+    return newExercise
+}
 
 export async function createSchedule(name: string) {
     const session = await auth.api.getSession({ headers: await headers() });
