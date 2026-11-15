@@ -10,22 +10,22 @@ import type { DayRecord } from "@/types/database";
 import type { ExerciseRecordCopy } from "@/types/database"
 
 type ExerciseListProps = {
-    scheduleRecordsState: ScheduleRecord[];
-    viewingExercises: DayRecord | null;
-    
-    setScheduleRecordsState: (value: ScheduleRecord[]) => void;
-    setViewingExercises: (value: DayRecord) => void
+    dayEditing: DayRecord | null;
+    scheduleEditing: ScheduleRecord | null;
+    viewingExercises: boolean;
+
+    setDayEditing: (value: DayRecord) => void;
+    setScheduleEditing: (value: ScheduleRecord) => void;
+    setViewingExercises: (value: boolean) => void
 };
 
 
-export default function ExerciseList({ scheduleRecordsState, viewingExercises, setScheduleRecordsState, setViewingExercises } : ExerciseListProps) {
+export default function ExerciseList({ dayEditing, scheduleEditing, viewingExercises, setDayEditing, setScheduleEditing, setViewingExercises } : ExerciseListProps) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [isRestDay, setIsRestDay] = useState(false);
     const [addedExercise, setAddedExercise] = useState<ExerciseRecordCopy | null>(null);
     const [exerciseList, setExerciseList] = useState<ExerciseRecordCopy[] | null>([]);
     
-    const exerciseListCopy = [] as ExerciseRecordCopy[];
-
     const toggleExpand = (id: string) => {
         // If the clicked card is already open, close it. Otherwise, open the new one.
         setExpandedId(expandedId === id ? null : id);
@@ -47,7 +47,7 @@ export default function ExerciseList({ scheduleRecordsState, viewingExercises, s
             name: formData.get("name")?.toString()!,
             sets: Number(formData.get("sets")),
             reps: Number(formData.get("reps")),
-            dayId: viewingExercises?.id!
+            dayId: dayEditing?.id!
         }
         setExerciseList((prevList) => [...prevList!, exercise]);
     }
@@ -59,11 +59,11 @@ export default function ExerciseList({ scheduleRecordsState, viewingExercises, s
     }
 
     const findExercises = () => {
-        const daysList = scheduleRecordsState.at(0)?.days!;
+        const daysList = scheduleEditing?.days!;
         for (let i = 0; i < daysList.length; i++) {
             const dayRecord = Object.entries(daysList.at(i)!)
 
-            if (dayRecord.find(([key, val]) => val === viewingExercises?.id)) {
+            if (dayRecord.find(([key, val]) => val === dayEditing?.id)) {
                 return daysList.at(i)?.exercises
             }
         }
@@ -75,7 +75,7 @@ export default function ExerciseList({ scheduleRecordsState, viewingExercises, s
                 {/* Day Settings Section */}
                 <div className="flex flex-col gap-2 md:gap-3">
                     <label className="text-sm md:text-base font-semibold text-gray-500 uppercase tracking-wider pl-1">
-                        {viewingExercises?.name}
+                        {dayEditing?.name}
                     </label>
 
                     <div className="flex flex-col md:flex-row gap-4">
@@ -122,11 +122,11 @@ export default function ExerciseList({ scheduleRecordsState, viewingExercises, s
                     </div>
                 ) : (
                     <>
-                    {findExercises()?.map((exercise, index) => (
+                    {dayEditing?.exercises?.map((exercise, index) => (
                         <ExerciseCard
                             key={index}
                             name={exercise.name} 
-                            sets={exercise.sets} 
+                            sets={exercise.sets}
                             reps={exercise.reps}>
                         </ExerciseCard>
                     ))}

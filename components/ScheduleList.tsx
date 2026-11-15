@@ -6,27 +6,30 @@ import type { ScheduleRecord } from "@/types/database";
 import type { DayRecord } from "@/types/database";
 
 type ScheduleListProps = {
+    scheduleEditing: ScheduleRecord | null;
     scheduleRecordsState: ScheduleRecord[];
     hasSchedule: boolean;
     viewingSchedules: boolean;
-    viewingDays: string;
+    viewingDays: boolean;
     creatingNewSchedule: boolean
 
+    setScheduleEditing: (value: ScheduleRecord) => void;
     setScheduleRecordsState: (value: ScheduleRecord[]) => void;
     setViewingSchedules: (value: boolean) => void;
-    setViewingDays: (value: string) => void;
+    setViewingDays: (value: boolean) => void;
     setCreatingNewSchedule: (value:boolean) => void;
 }
 
-export default function ScheduleList({ scheduleRecordsState, hasSchedule, viewingSchedules, viewingDays, creatingNewSchedule, setScheduleRecordsState, setViewingSchedules, setViewingDays, setCreatingNewSchedule }: ScheduleListProps) {
+export default function ScheduleList({ scheduleEditing, scheduleRecordsState, hasSchedule, viewingSchedules, viewingDays, creatingNewSchedule, setScheduleEditing, setScheduleRecordsState, setViewingSchedules, setViewingDays, setCreatingNewSchedule }: ScheduleListProps) {
     const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const [isSaving, setIsSaving] = useState(false);
     const [scheduleState, setScheduleState] = useState<ScheduleRecord | null>(null);
     const [dayState, setDayState] = useState<DayRecord | null>(null);
 
-    const editScheduleClicked = () => {
+    const editScheduleClicked = (schedule: ScheduleRecord) => {
+        setScheduleEditing(schedule)
         setViewingSchedules(false);
-        setViewingDays("test");
+        setViewingDays(true);
     }
 
     const createNewScheduleClicked = () => {
@@ -64,9 +67,8 @@ export default function ScheduleList({ scheduleRecordsState, hasSchedule, viewin
                 schedule.days?.push(day);
             }
             setIsSaving(false);
-            
-            setScheduleRecordsState([schedule])
-            setViewingDays(newSchedule.id);
+            setScheduleEditing(schedule)
+            setViewingDays(true);
         } catch (error) {
             console.error("Failed to save:", error);
         }
@@ -92,7 +94,7 @@ export default function ScheduleList({ scheduleRecordsState, hasSchedule, viewin
                         {/* Left Card: Edit Existing Schedule */}
                         {hasSchedule && scheduleRecordsState.map((record, index) => (
                             <button key={record.id} className="group w-full h-full text-left focus:outline-none focus:ring-4 focus:ring-blue-100 rounded-xl transition-all"
-                                    onClick={() => editScheduleClicked()}>
+                                    onClick={() => editScheduleClicked(record)}>
                                 <div className="h-full flex flex-col p-6 md:p-8 rounded-xl border-2 border-gray-200 bg-white hover:border-blue-500 hover:bg-blue-50 hover:shadow-md transition-all duration-200 relative overflow-hidden">
                                     
                                     {/* Active Badge */}
