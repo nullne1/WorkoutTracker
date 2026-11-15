@@ -6,6 +6,51 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { ExerciseRecordCopy } from "@/types/database";
 
+export async function createSchedule(name: string) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) throw new Error("Not logged in");
+
+    const newSchedule = prisma.schedule.create({
+        data: { 
+            name: name,
+            userId: session.user.id
+        }
+    })
+    
+    return newSchedule;
+}
+
+export async function createDay(name: string, routine: string, scheduleId: string) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) throw new Error("Not logged in");
+
+    const newDay = prisma.day.create({
+        data: { 
+            name: name,
+            routine: routine,
+            scheduleId: scheduleId,
+        }
+    })
+
+    return newDay;
+}
+
+export async function updateDay(id: string, name: string) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) throw new Error("Not logged in");
+
+    const updatedDay = prisma.day.update({
+        where: {
+            id: id,
+        },
+        data: {
+            name: name
+        }
+    })
+
+    return updatedDay
+}
+
 export async function saveExercise(exercise: ExerciseRecordCopy) { // name: string, sets: number, reps: number, day: string
     const session = await auth.api.getSession({ headers: await headers() });
     if (!session) throw new Error("Not logged in");
@@ -27,35 +72,6 @@ export async function saveExercise(exercise: ExerciseRecordCopy) { // name: stri
     })
 
     return newExercise
-}
-
-export async function createSchedule(name: string) {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) throw new Error("Not logged in");
-
-    const newSchedule = prisma.schedule.create({
-        data: { 
-            name: name,
-            userId: session.user.id
-        }
-    })
-    
-    return newSchedule;
-}
-
-export async function createDay(name: string, routine: string, scheduleId: string) {
-    const session = await auth.api.getSession({ headers: await headers() });
-    if (!session) throw new Error("Not logged in");
-
-    const newSchedule = prisma.day.create({
-        data: { 
-            name: name,
-            routine: routine,
-            scheduleId: scheduleId,
-        }
-    })
-
-    return newSchedule;
 }
 
 export async function nukeDatabase() {

@@ -10,23 +10,12 @@ type DayListProps = {
 }
 
 export default function DayList({ scheduleEditing, setDayEditing, setViewingDays, setViewingExercises }: DayListProps) {
-    const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const weeklySplit = [
-        { day: "Day 1", name: "Monday", routine: "Push (Chest, Shoulders, Triceps)" },
-        { day: "Day 2", name: "Tuesday", routine: "Pull (Back, Biceps)" },
-        { day: "Day 3", name: "Wednesday", routine: "Legs & Core" },
-        { day: "Day 4", name: "Thursday", routine: "Rest" },
-        { day: "Day 5", name: "Friday", routine: "Full Body (Household Objects)" },
-        { day: "Day 6", name: "Saturday", routine: "Active Recovery" },
-        { day: "Day 7", name: "Sunday", routine: "Rest" },
-    ];
-    
+    const week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const editDayClicked = (day: DayRecord) => {
         setDayEditing(day)
         setViewingDays(false);
         setViewingExercises(true);
     }
-    
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 md:gap-6 p-4 md:p-8 lg:p-12">
                 {(scheduleEditing?.days?.map((day, index) => (
@@ -41,7 +30,7 @@ export default function DayList({ scheduleEditing, setDayEditing, setViewingDays
                             <div className="flex justify-between items-start mb-4 md:mb-6">
                                 <div>
                                     <span className="text-xs md:text-sm font-semibold text-blue-600 group-hover:text-blue-700 uppercase tracking-wider transition-colors">
-                                        Day {index + 1}
+                                        {week.at(index)}
                                     </span>
                                     <h2 className="text-lg md:text-xl font-bold text-gray-900">
                                         {day.name}

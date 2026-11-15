@@ -9,16 +9,16 @@ type ScheduleListProps = {
     scheduleRecordsState: ScheduleRecord[];
     hasSchedule: boolean;
 
-    setHasSchedule (value: boolean): void;
-    setScheduleRecordsState (value: ScheduleRecord[]): void;
-    setBackActive (value: boolean): void;
+    setHasSchedule: (value: boolean) => void;
+    setScheduleRecordsState: (value: ScheduleRecord[]) => void;
+    setBackActive: (value: boolean) => void;
     setScheduleEditing: (value: ScheduleRecord) => void;
     setViewingSchedules: (value: boolean) => void;
     setViewingDays: (value: boolean) => void;
 }
 
 export default function ScheduleList({ scheduleRecordsState, hasSchedule, setHasSchedule, setScheduleRecordsState, setBackActive, setScheduleEditing, setViewingSchedules, setViewingDays }: ScheduleListProps) {
-    const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const week = ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"];
     const [isSaving, setIsSaving] = useState(false);
     const [scheduleState, setScheduleState] = useState<ScheduleRecord | null>(null);
     const [dayState, setDayState] = useState<DayRecord | null>(null);
@@ -75,7 +75,7 @@ export default function ScheduleList({ scheduleRecordsState, hasSchedule, setHas
             console.error("Failed to save:", error);
         }
     }
-    console.log(scheduleRecordsState)
+
     return (
         <div>
             <div className="min-h-screen bg-gray-50 p-4 md:p-4 lg:p-4">

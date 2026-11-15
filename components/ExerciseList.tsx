@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { SubmitEvent } from "react";
 
 import { saveExercise } from "@/app/(protected)/actions";
+import { updateDay } from "@/app/(protected)/actions";
 import ExerciseCard from "./ExerciseCard"
 
 import type { ScheduleRecord } from "@/types/database";
@@ -12,12 +13,15 @@ import type { ExerciseRecordCopy } from "@/types/database"
 type ExerciseListProps = {
     dayEditing: DayRecord | null;
     scheduleEditing: ScheduleRecord | null;
+
+    setScheduleEditing: (value: ScheduleRecord) => void;
 };
 
-export default function ExerciseList({ dayEditing, scheduleEditing } : ExerciseListProps) {
+export default function ExerciseList({ dayEditing, scheduleEditing, setScheduleEditing } : ExerciseListProps) {
+    const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [isRestDay, setIsRestDay] = useState(false);
-    const [addedExercise, setAddedExercise] = useState<ExerciseRecordCopy | null>(null);
+    const [dayName, setDayName] = useState("");
     const [exerciseList, setExerciseList] = useState<ExerciseRecordCopy[] | null>([]);
     
     const toggleExpand = (id: string) => {
@@ -47,9 +51,29 @@ export default function ExerciseList({ dayEditing, scheduleEditing } : ExerciseL
     }
 
     const saveClicked = () => {
+        updateDay(dayEditing?.id!, dayName)
         for (let i = 0; i < exerciseList!.length; i++) {
             saveExercise(exerciseList!.at(i)!);
         }
+
+        const updatedDay: DayRecord = {
+            id: dayEditing?.id,
+            name: dayName,
+            routine: dayEditing?.routine,
+            scheduleId: dayEditing?.scheduleId,
+            exercises: dayEditing?.exercises
+        };
+
+        var updatedSchedule = scheduleEditing;
+        var scheduleDays = updatedSchedule?.days
+        var index = scheduleDays?.findIndex((day) => day.id === dayEditing?.id)
+        const newDays = scheduleEditing?.days?.toSpliced(index!, 1, updatedDay);
+
+
+        setScheduleEditing({
+            ...scheduleEditing,
+            days: newDays,
+        });
     }
 
     const findExercises = () => {
@@ -62,7 +86,11 @@ export default function ExerciseList({ dayEditing, scheduleEditing } : ExerciseL
             }
         }
     }
-    console.log(findExercises())
+
+    const handleDayName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDayName(e.target.value);
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 p-4">
             <div className="mx-auto max-w-3xl p-6 md:p-10 border border-gray-200 rounded-2xl bg-white shadow-sm flex flex-col gap-6 md:gap-8">
@@ -76,7 +104,8 @@ export default function ExerciseList({ dayEditing, scheduleEditing } : ExerciseL
                         {/* Routine Name Input */}
                         <input 
                             type="text" 
-                            defaultValue=""
+                            value={dayName}
+                            onChange={handleDayName}
                             disabled={isRestDay}
                             placeholder="Day: e.g., Push, Legs, Full Body"
                             className="flex-1 w-full p-4 md:p-5 text-lg md:text-xl font-bold text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-gray-400 placeholder:font-medium"

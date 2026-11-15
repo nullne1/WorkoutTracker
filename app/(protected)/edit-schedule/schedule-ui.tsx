@@ -35,7 +35,6 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
     const navSlot = mounted ? document.getElementById("top-nav-slot") : null;
     
     const backClicked = () => {
-        console.log("helo")
         if (viewingDays) {
             setBackActive(false);
             setViewingDays(false);
@@ -96,6 +95,8 @@ export default function ScheduleUI({ scheduleRecords }: ScheduleUIProps) {
                     <ExerciseList
                         dayEditing={dayEditing}
                         scheduleEditing={scheduleEditing}
+
+                        setScheduleEditing={setScheduleEditing}
                     />
                 )}
 
