@@ -2,20 +2,14 @@ import type { ScheduleRecord } from "@/types/database";
 import type { DayRecord } from "@/types/database";
 
 type DayListProps = {
-    dayEditing: DayRecord | null;
     scheduleEditing: ScheduleRecord | null;
-    viewingDays: boolean;
-    viewingExercises: boolean;
-    creatingNewSchedule: boolean;
 
     setDayEditing: (value: DayRecord) => void;
-    setScheduleEditing: (value: ScheduleRecord) => void;
     setViewingDays: (value: boolean) => void;
     setViewingExercises: (value: boolean) => void;
-    setCreatingNewSchedule: (value: boolean) => void;
 }
 
-export default function DayList({ dayEditing, scheduleEditing, viewingDays, viewingExercises, creatingNewSchedule, setDayEditing, setScheduleEditing, setViewingDays, setViewingExercises, setCreatingNewSchedule }: DayListProps) {
+export default function DayList({ scheduleEditing, setDayEditing, setViewingDays, setViewingExercises }: DayListProps) {
     const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const weeklySplit = [
         { day: "Day 1", name: "Monday", routine: "Push (Chest, Shoulders, Triceps)" },

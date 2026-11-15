@@ -6,28 +6,26 @@ import type { ScheduleRecord } from "@/types/database";
 import type { DayRecord } from "@/types/database";
 
 type ScheduleListProps = {
-    scheduleEditing: ScheduleRecord | null;
     scheduleRecordsState: ScheduleRecord[];
     hasSchedule: boolean;
-    viewingSchedules: boolean;
-    viewingDays: boolean;
-    creatingNewSchedule: boolean
 
+    setHasSchedule (value: boolean): void;
+    setScheduleRecordsState (value: ScheduleRecord[]): void;
+    setBackActive (value: boolean): void;
     setScheduleEditing: (value: ScheduleRecord) => void;
-    setScheduleRecordsState: (value: ScheduleRecord[]) => void;
     setViewingSchedules: (value: boolean) => void;
     setViewingDays: (value: boolean) => void;
-    setCreatingNewSchedule: (value:boolean) => void;
 }
 
-export default function ScheduleList({ scheduleEditing, scheduleRecordsState, hasSchedule, viewingSchedules, viewingDays, creatingNewSchedule, setScheduleEditing, setScheduleRecordsState, setViewingSchedules, setViewingDays, setCreatingNewSchedule }: ScheduleListProps) {
+export default function ScheduleList({ scheduleRecordsState, hasSchedule, setHasSchedule, setScheduleRecordsState, setBackActive, setScheduleEditing, setViewingSchedules, setViewingDays }: ScheduleListProps) {
     const week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const [isSaving, setIsSaving] = useState(false);
     const [scheduleState, setScheduleState] = useState<ScheduleRecord | null>(null);
     const [dayState, setDayState] = useState<DayRecord | null>(null);
 
     const editScheduleClicked = (schedule: ScheduleRecord) => {
-        setScheduleEditing(schedule)
+        setScheduleEditing(schedule);
+        setBackActive(true);
         setViewingSchedules(false);
         setViewingDays(true);
     }
@@ -68,12 +66,16 @@ export default function ScheduleList({ scheduleEditing, scheduleRecordsState, ha
             }
             setIsSaving(false);
             setScheduleEditing(schedule)
+            setScheduleRecordsState([...scheduleRecordsState, schedule])
+            
+            setHasSchedule
             setViewingDays(true);
+            setBackActive(true);
         } catch (error) {
             console.error("Failed to save:", error);
         }
     }
-
+    console.log(scheduleRecordsState)
     return (
         <div>
             <div className="min-h-screen bg-gray-50 p-4 md:p-4 lg:p-4">

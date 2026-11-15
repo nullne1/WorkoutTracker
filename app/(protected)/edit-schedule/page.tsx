@@ -3,9 +3,17 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+
 import ScheduleUI from "./schedule-ui";
 
+type editScheduleProps = {
+    backActive: boolean;
+
+    setBackActive: boolean;
+}
+
 export default async function scheduleUI() {
+
     const session = await auth.api.getSession({ headers: await headers() });   
     const schedules = await prisma.schedule.findMany({
         where: { userId: session?.user?.id },
@@ -19,7 +27,6 @@ export default async function scheduleUI() {
     });
 
     return (
-        <ScheduleUI
-            scheduleRecords = {schedules}/>
+        <ScheduleUI scheduleRecords = {schedules}/>
     )
 }

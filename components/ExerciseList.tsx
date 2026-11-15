@@ -12,15 +12,9 @@ import type { ExerciseRecordCopy } from "@/types/database"
 type ExerciseListProps = {
     dayEditing: DayRecord | null;
     scheduleEditing: ScheduleRecord | null;
-    viewingExercises: boolean;
-
-    setDayEditing: (value: DayRecord) => void;
-    setScheduleEditing: (value: ScheduleRecord) => void;
-    setViewingExercises: (value: boolean) => void
 };
 
-
-export default function ExerciseList({ dayEditing, scheduleEditing, viewingExercises, setDayEditing, setScheduleEditing, setViewingExercises } : ExerciseListProps) {
+export default function ExerciseList({ dayEditing, scheduleEditing } : ExerciseListProps) {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [isRestDay, setIsRestDay] = useState(false);
     const [addedExercise, setAddedExercise] = useState<ExerciseRecordCopy | null>(null);
